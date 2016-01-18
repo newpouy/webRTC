@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<script src="http://cdn.peerjs.com/0.3/peer.min.js"></script>
+</head> 
+<body>
+
+
+<div id="getId">
+getId
+</div>
+<br/>
+<br/>
+<br/>
+<div id="start">
+start
+</div>
+<input type="text" id="counter"/>
+<br/>
+<br/>
+<br/>
+<br/>
+<div id = "send">
+<input type="text" id="sendText"/>
+<input type="button" id="sendBtn"/>
+</div>
+
+<script>
+
+var start = document.getElementById('start');
+var receive = document.getElementById('receive');
+var getId = document.getElementById('getId');
+
+start.addEventListener('click', startPeer, false);
+//receive.addEventListener('click', receivePeer, false);
+getId.addEventListener('click', getId, false);
+
+var myId;
+var peer;
+
+(function getId(){
+	peer = new Peer({key: 'lwjd5qra8257b9'});	
+	peer.on('open', function(id) {
+		myId = id;	
+  		console.log('My peer ID is: ' + id);
+	});
+})();
+
+function startPeer(){
+	var counterId = document.getElementById('counter').value;
+	var conn = peer.connect(counterId, {
+        label: 'chat',
+        serialization: 'none',
+        metadata: {message: 'hi i want to chat with you!'}});
+	conn.send('hi');
+	conn.on('open', function(){
+		console.log('hi');
+		conn.on('data', function(data){
+			console.log(data);	
+		});
+	});
+}
+function sendText(){
+
+}
+
+</script>
+
+</body>
+</html>
