@@ -7,12 +7,6 @@
 <body>
 
 
-<div id="getId">
-getId
-</div>
-<br/>
-<br/>
-<br/>
 <div id="start">
 start
 </div>
@@ -23,21 +17,19 @@ start
 <br/>
 <div id = "send">
 <input type="text" id="sendText"/>
-<input type="button" id="sendBtn"/>
+<input type="button" id="sendBtn" onclick="sendText1()" />
 </div>
 
 <script>
 
 var start = document.getElementById('start');
-var receive = document.getElementById('receive');
-var getId = document.getElementById('getId');
+var sendText = document.getElementById('sendText');
 
 start.addEventListener('click', startPeer, false);
-//receive.addEventListener('click', receivePeer, false);
-getId.addEventListener('click', getId, false);
 
 var myId;
 var peer;
+var myConn;
 
 (function getId(){
 	peer = new Peer({key: 'lwjd5qra8257b9'});	
@@ -45,24 +37,42 @@ var peer;
 		myId = id;	
   		console.log('My peer ID is: ' + id);
 	});
+
 })();
 
+//Connection Sender
 function startPeer(){
 	var counterId = document.getElementById('counter').value;
-	var conn = peer.connect(counterId, {
+	conn = peer.connect(counterId, {
         label: 'chat',
         serialization: 'none',
-        metadata: {message: 'hi i want to chat with you!'}});
-	conn.send('hi');
+        metadata: {message: 'hi i want to chat with you!'}});	
 	conn.on('open', function(){
-		console.log('hi');
-		conn.on('data', function(data){
-			console.log(data);	
-		});
+		console.log('connection has opened');
 	});
+	myConn = conn;
+	myConn.on('data', function(data){
+		console.log(data);
+	})
 }
-function sendText(){
+//Connection Receiver
+peer.on('connection', function(conn) {
+		myConn = conn;
+		console.log('Im connected with'+conn.id); 
+		console.dir(conn);
+		conn.on('data', function(data){
+			console.dir(data);
+		})
 
+});
+
+var sendBtn = document.getElementById('sendBtn');
+sendBtn.addEventListener('click', sendText);
+
+function sendText1(){
+	var txt = document.getElementById('sendText');
+	console.log(txt.value);	
+	myConn.send(txt.value);
 }
 
 </script>
